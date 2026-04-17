@@ -67,14 +67,28 @@ function Portfolio() {
   const p = t.portfolio
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
-  const headerRef  = useReveal()
+  const [dir, setDir] = useState('next')
+  const [animKey, setAnimKey] = useState(0)
+  const headerRef   = useReveal()
   const carouselRef = useReveal(0.1)
 
   const next = useCallback(() => {
+    setDir('next')
+    setAnimKey(k => k + 1)
     setCurrent(i => (i + 1) % projectImages.length)
   }, [])
 
-  const prev = () => setCurrent(i => (i - 1 + projectImages.length) % projectImages.length)
+  const prev = useCallback(() => {
+    setDir('prev')
+    setAnimKey(k => k + 1)
+    setCurrent(i => (i - 1 + projectImages.length) % projectImages.length)
+  }, [])
+
+  const goTo = useCallback((i) => {
+    setDir(i > current ? 'next' : 'prev')
+    setAnimKey(k => k + 1)
+    setCurrent(i)
+  }, [current])
 
   useEffect(() => {
     if (paused) return
@@ -82,12 +96,10 @@ function Portfolio() {
     return () => clearInterval(timer)
   }, [paused, next])
 
-  const image = projectImages[current]
-  const tags  = projectTags[current]
-  const live  = projectLinks[current]
+  const image   = projectImages[current]
+  const tags    = projectTags[current]
+  const live    = projectLinks[current]
   const project = p.projects[current]
-  const isPdf = image.endsWith('.pdf')
-  const isPng = image.endsWith('.png')
 
   return (
     <section id="projetos" className="portfolio">
@@ -107,9 +119,11 @@ function Portfolio() {
             <i className="bi bi-chevron-left"></i>
           </button>
 
-          <div className="carousel-card">
-            <ProjectPreview key={image} image={image} title={project.title} live={live} viewLabel={p.viewProject} />
-
+          <div
+            key={animKey}
+            className={`carousel-card carousel-card--${dir}`}
+          >
+            <ProjectPreview image={image} title={project.title} live={live} viewLabel={p.viewProject} />
             <div className="carousel-info">
               <h3>{project.title}</h3>
               <p>{project.description}</p>
@@ -132,7 +146,7 @@ function Portfolio() {
             <button
               key={i}
               className={`carousel-dot ${i === current ? 'active' : ''}`}
-              onClick={() => setCurrent(i)}
+              onClick={() => goTo(i)}
               aria-label={`${p.title} ${i + 1}`}
             />
           ))}

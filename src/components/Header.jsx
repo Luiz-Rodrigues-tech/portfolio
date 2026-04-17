@@ -11,7 +11,6 @@ function Header() {
   const { lang, setLang, t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [langOpen, setLangOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60)
@@ -24,8 +23,6 @@ function Header() {
     if (el) el.scrollIntoView({ behavior: 'smooth' })
     setMenuOpen(false)
   }
-
-  const currentLang = languages.find(l => l.code === lang)
 
   return (
     <header className={scrolled ? 'scrolled' : ''}>
@@ -46,28 +43,16 @@ function Header() {
         <div className="header-actions">
           {/* Language switcher */}
           <div className="lang-switcher">
-            <button
-              className="lang-current"
-              onClick={() => setLangOpen(o => !o)}
-              aria-label="Trocar idioma"
-            >
-              <span>{currentLang.flag}</span>
-              <span>{currentLang.label}</span>
-              <i className={`bi bi-chevron-${langOpen ? 'up' : 'down'}`}></i>
-            </button>
-            {langOpen && (
-              <div className="lang-dropdown">
-                {languages.map(l => (
-                  <button
-                    key={l.code}
-                    className={`lang-option ${l.code === lang ? 'active' : ''}`}
-                    onClick={() => { setLang(l.code); setLangOpen(false) }}
-                  >
-                    <span>{l.flag}</span> {l.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            {languages.map(l => (
+              <button
+                key={l.code}
+                className={`lang-btn ${l.code === lang ? 'lang-btn--active' : ''}`}
+                onClick={() => setLang(l.code)}
+                aria-label={l.label}
+              >
+                {l.label}
+              </button>
+            ))}
           </div>
 
           <button className="btn-contato-header" onClick={() => scrollTo('contato')}>

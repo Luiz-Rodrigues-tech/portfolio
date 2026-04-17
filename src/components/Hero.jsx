@@ -36,7 +36,7 @@ function Hero() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="/img/computer.png" alt="Computer" />
+          <img src="/img/foto-minha.png" alt="Luiz Henrique" />
         </div>
       </div>
       <div className="hero-scroll">scroll</div>
