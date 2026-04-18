@@ -23,7 +23,6 @@ function Contato() {
       <div className="interface">
         <div ref={headerRef} className="section-header reveal">
           <h2 className="section-title">{c.title} <span>{c.titleHighlight}</span></h2>
-          <p className="section-subtitle">{c.subtitle}</p>
         </div>
         <div ref={contentRef} className="contato-inner reveal">
           <div className="contato-info">

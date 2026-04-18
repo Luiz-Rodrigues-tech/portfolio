@@ -13,7 +13,6 @@ function Especialidades() {
         <h2
           ref={titleRef}
           className="section-title reveal"
-          style={{ textAlign: 'center' }}
         >
           {s.title.toUpperCase()} <span>{s.titleHighlight.toUpperCase()}</span>
         </h2>

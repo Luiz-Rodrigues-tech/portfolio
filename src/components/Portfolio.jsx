@@ -106,7 +106,6 @@ function Portfolio() {
       <div className="interface">
         <div ref={headerRef} className="section-header reveal">
           <h2 className="section-title">{p.title} <span>{p.titleHighlight}</span></h2>
-          <p className="section-subtitle">{p.subtitle}</p>
         </div>
 
         <div

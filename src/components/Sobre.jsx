@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 
 const lines = [
-  { tokens: [{ t: 'const', c: 'kw' }, { t: ' developer', c: 'var' }, { t: ' = {', c: 'base' }] },
-  { tokens: [{ t: '  name', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Luiz Henrique"', c: 'str' }, { t: ',', c: 'base' }] },
-  { tokens: [{ t: '  role', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Full-Stack Developer"', c: 'str' }, { t: ',', c: 'base' }] },
-  { tokens: [{ t: '  education', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Análise e Desenvolvimento de Sistemas"', c: 'str' }, { t: ',', c: 'base' }] },
-  { tokens: [{ t: '  stack', c: 'prop' }, { t: ': [', c: 'base' }, { t: '"PHP"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Laravel"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Vue.js"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"React"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Flutter"', c: 'str' }, { t: '],', c: 'base' }] },
-  { tokens: [{ t: '  focus', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Do front ao back, do design ao deploy"', c: 'str' }, { t: ',', c: 'base' }] },
-  { tokens: [{ t: '  available', c: 'prop' }, { t: ': ', c: 'base' }, { t: 'true', c: 'kw' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: 'const', c: 'kw' }, { t: ' desenvolvedor', c: 'var' }, { t: ' = {', c: 'base' }] },
+  { tokens: [{ t: '  nome', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Luiz Henrique da Cruz Rodrigues"', c: 'str' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: '  cargo', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Desenvolvedor Full-Stack"', c: 'str' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: '  formacao', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"ADS — FATEC SENAI MT"', c: 'str' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: '  backend', c: 'prop' }, { t: ': [', c: 'base' }, { t: '"PHP"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Laravel"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"APIs RESTful"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"MySQL"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"PostgreSQL"', c: 'str' }, { t: '],', c: 'base' }] },
+  { tokens: [{ t: '  frontend', c: 'prop' }, { t: ': [', c: 'base' }, { t: '"Vue.js"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"React"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Angular"', c: 'str' }, { t: ', ', c: 'base' }, { t: '"Tailwind CSS"', c: 'str' }, { t: '],', c: 'base' }] },
+  { tokens: [{ t: '  mobile', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Flutter"', c: 'str' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: '  idiomas', c: 'prop' }, { t: ': ', c: 'base' }, { t: '"Inglês técnico (leitura e escrita)"', c: 'str' }, { t: ',', c: 'base' }] },
+  { tokens: [{ t: '  disponivel', c: 'prop' }, { t: ': ', c: 'base' }, { t: 'true', c: 'kw' }, { t: ',', c: 'base' }] },
   { tokens: [{ t: '}', c: 'base' }] },
 ]
 
@@ -50,7 +52,6 @@ export default function Sobre() {
   const [lineIdx, setLineIdx]     = useState(-1)
   const [charIdx, setCharIdx]     = useState(0)
   const [doneLines, setDoneLines] = useState([])
-  const [statsIn, setStatsIn]     = useState(false)
   const [triggered, setTriggered] = useState(false)
 
   // IntersectionObserver
@@ -86,20 +87,12 @@ export default function Sobre() {
         setTimeout(() => {
           if (lineIdx + 1 < lines.length) {
             setLineIdx(lineIdx + 1)
-          } else {
-            setTimeout(() => setStatsIn(true), 400)
           }
         }, 60)
       }
     }, speed)
     return () => clearInterval(iv)
   }, [lineIdx])
-
-  const stats = [
-    { icon: 'bi-mortarboard', label: a.label1, value: a.label1Value },
-    { icon: 'bi-code-square',  label: a.label2, value: 'Full-Stack' },
-    { icon: 'bi-github',       label: a.label3, value: 'GitHub' },
-  ]
 
   return (
     <section id="sobre" className="sobre" ref={sectionRef}>
@@ -133,22 +126,6 @@ export default function Sobre() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className={`sobre-highlights comic-highlights ${statsIn ? 'comic-highlights--in' : ''}`}>
-          {stats.map((h, idx) => (
-            <div
-              className="highlight-item"
-              key={h.label}
-              style={{ transitionDelay: `${idx * 130}ms` }}
-            >
-              <i className={`bi ${h.icon}`} />
-              <div>
-                <span className="highlight-label">{h.label}</span>
-                <span className="highlight-value">{h.value}</span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   )

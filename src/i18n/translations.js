@@ -44,8 +44,8 @@ const translations = {
       label1Value: 'Análise e Desenvolvimento de Sistemas',
     },
     portfolio: {
-      title: 'Meu',
-      titleHighlight: 'Portfólio',
+      title: 'Meus',
+      titleHighlight: 'Projetos',
       subtitle: 'Projetos reais, entregues e no ar',
       visit: 'Visitar site',
       viewProject: 'Ver projeto',
@@ -128,7 +128,7 @@ const translations = {
     },
     portfolio: {
       title: 'My',
-      titleHighlight: 'Portfolio',
+      titleHighlight: 'Projects',
       subtitle: 'Real projects, delivered and live',
       visit: 'Visit site',
       viewProject: 'View project',
@@ -210,8 +210,8 @@ const translations = {
       label1Value: 'Análisis y Desarrollo de Sistemas',
     },
     portfolio: {
-      title: 'Mi',
-      titleHighlight: 'Portafolio',
+      title: 'Mis',
+      titleHighlight: 'Proyectos',
       subtitle: 'Proyectos reales, entregados y en línea',
       visit: 'Visitar sitio',
       viewProject: 'Ver proyecto',

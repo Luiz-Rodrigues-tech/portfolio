@@ -7,6 +7,7 @@ import Portfolio from './components/Portfolio'
 import Contato from './components/Contato'
 import Footer from './components/Footer'
 import StarField from './components/StarField'
+import Experiencia from './components/Experiencia'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Especialidades />
         <Portfolio />
         <Sobre />
+        <Experiencia />
         <Contato />
       </main>
       <Footer />
