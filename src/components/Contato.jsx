@@ -1,13 +1,42 @@
 import { useState } from 'react'
-import { useLanguage } from '../context/LanguageContext'
 import { useReveal } from '../hooks/useReveal'
 
+const contactItems = [
+  {
+    icon: 'bi-envelope',
+    label: 'E-mail',
+    value: 'luizhhuu@gmail.com',
+    href: 'mailto:luizhhuu@gmail.com',
+    desc: 'Resposta rápida para projetos e oportunidades',
+  },
+  {
+    icon: 'bi-github',
+    label: 'GitHub',
+    value: 'github.com/Luiz-Rodrigues-tech',
+    href: 'https://github.com/Luiz-Rodrigues-tech',
+    desc: 'Veja meus projetos e códigos',
+  },
+  {
+    icon: 'bi-linkedin',
+    label: 'LinkedIn',
+    value: 'linkedin.com/in/luiz-rodrigues-tech',
+    href: 'https://www.linkedin.com/in/luiz-rodrigues-tech',
+    desc: 'Conecte-se comigo profissionalmente',
+  },
+  {
+    icon: 'bi-whatsapp',
+    label: 'WhatsApp',
+    value: '+55 (65) 99321-9244',
+    href: 'https://wa.me/5565993219244',
+    desc: 'Contato direto para conversas rápidas',
+  },
+]
+
 function Contato() {
-  const { t } = useLanguage()
-  const c = t.contact
   const [form, setForm] = useState({ nome: '', email: '', mensagem: '' })
   const headerRef = useReveal()
-  const contentRef = useReveal(0.1)
+  const infoRef = useReveal(0.08)
+  const formRef = useReveal(0.12)
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -21,55 +50,77 @@ function Contato() {
   return (
     <section id="contato" className="contato">
       <div className="interface">
+
         <div ref={headerRef} className="section-header reveal">
-          <h2 className="section-title">{c.title} <span>{c.titleHighlight}</span></h2>
+          <h2 className="section-title">Entre em <span>Contato</span></h2>
+          <p className="contato-subtitle">
+            Se você precisa desenvolver um sistema, melhorar uma aplicação existente ou integrar serviços, posso te ajudar a construir uma solução funcional e bem estruturada.
+          </p>
         </div>
-        <div ref={contentRef} className="contato-inner reveal">
-          <div className="contato-info">
-            <div className="contato-info-item">
-              <i className="bi bi-envelope"></i>
-              <div>
-                <span>{c.emailLabel}</span>
-                <a href="mailto:luizhhuu@gmail.com">luizhhuu@gmail.com</a>
-              </div>
-            </div>
-            <div className="contato-info-item">
-              <i className="bi bi-github"></i>
-              <div>
-                <span>{c.githubLabel}</span>
-                <a href="https://github.com/Luiz-Rodrigues-tech" target="_blank" rel="noreferrer">
-                  github.com/Luiz-Rodrigues-tech
-                </a>
-              </div>
-            </div>
-            <div className="contato-info-item">
-              <i className="bi bi-linkedin"></i>
-              <div>
-                <span>{c.linkedinLabel}</span>
-                <a href="https://www.linkedin.com/in/luiz-rodrigues-tech" target="_blank" rel="noreferrer">
-                  linkedin.com/in/luiz-rodrigues-tech
-                </a>
-              </div>
+
+        <div className="contato-inner">
+
+          {/* Info */}
+          <div ref={infoRef} className="contato-info reveal">
+            {contactItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target={item.href.startsWith('mailto') ? undefined : '_blank'}
+                rel="noreferrer"
+                className="contato-info-item"
+              >
+                <i className={`bi ${item.icon}`} />
+                <div>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                  <p className="contato-info-item__desc">{item.desc}</p>
+                </div>
+              </a>
+            ))}
+
+            <div className="contato-response">
+              <i className="bi bi-clock" />
+              <span>Tempo médio de resposta: <strong>até 24h</strong></span>
             </div>
           </div>
 
-          <form className="contato-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="nome">{c.labelName}</label>
-              <input id="nome" name="nome" type="text" placeholder={c.placeholderName} value={form.nome} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">{c.labelEmail}</label>
-              <input id="email" name="email" type="email" placeholder={c.placeholderEmail} value={form.email} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="mensagem">{c.labelMessage}</label>
-              <textarea id="mensagem" name="mensagem" placeholder={c.placeholderMessage} rows={5} value={form.mensagem} onChange={handleChange} required />
-            </div>
-            <button type="submit" className="btn-primary btn-full">
-              {c.btnSend} <i className="bi bi-send"></i>
-            </button>
-          </form>
+          {/* Form */}
+          <div ref={formRef} className="reveal">
+            <p className="contato-form-intro">
+              Estou disponível para novos projetos, freelances e oportunidades em desenvolvimento web. Se quiser trocar uma ideia ou discutir uma solução, é só me chamar.
+            </p>
+            <form className="contato-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="nome">Nome</label>
+                <input
+                  id="nome" name="nome" type="text"
+                  placeholder="Seu nome"
+                  value={form.nome} onChange={handleChange} required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">E-mail</label>
+                <input
+                  id="email" name="email" type="email"
+                  placeholder="seu@email.com"
+                  value={form.email} onChange={handleChange} required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="mensagem">Mensagem</label>
+                <textarea
+                  id="mensagem" name="mensagem"
+                  placeholder="Me conte um pouco sobre o seu projeto, ideia ou necessidade"
+                  rows={5} value={form.mensagem} onChange={handleChange} required
+                />
+              </div>
+              <button type="submit" className="btn-primary btn-full">
+                Enviar mensagem <i className="bi bi-arrow-right" />
+              </button>
+            </form>
+          </div>
+
         </div>
       </div>
     </section>

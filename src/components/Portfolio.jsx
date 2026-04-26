@@ -30,34 +30,48 @@ function ProjectPreview({ image, title, live, viewLabel }) {
   const pngSrc = image.replace('.pdf', '.png').replace('Equali Consultoria', 'Equali_Consultoria')
   const [usePng, setUsePng] = useState(true)
   const [touched, setTouched] = useState(false)
+  const domain = live.replace('https://', '').replace('http://', '').split('/')[0]
 
   return (
-    <div
-      className={`carousel-preview${touched ? ' touch-active' : ''}`}
-      onTouchStart={() => setTouched(true)}
-      onTouchEnd={() => setTouched(false)}
-    >
-      {usePng ? (
-        <img
-          src={pngSrc}
-          alt={title}
-          className="carousel-img-scroll-img"
-          onError={() => setUsePng(false)}
-          draggable={false}
-        />
-      ) : (
-        <iframe
-          src={`${image}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-          title={title}
-          className="carousel-iframe"
-          scrolling="no"
-        />
-      )}
-      <a href={live} target="_blank" rel="noreferrer" className="carousel-overlay">
-        <span>
-          <i className="bi bi-box-arrow-up-right"></i> {viewLabel}
-        </span>
-      </a>
+    <div className="carousel-browser">
+      <div className="browser-chrome">
+        <div className="browser-dots">
+          <span className="dot-red" />
+          <span className="dot-yellow" />
+          <span className="dot-green" />
+        </div>
+        <div className="browser-url">
+          <i className="bi bi-lock-fill" />
+          {domain}
+        </div>
+      </div>
+      <div
+        className={`carousel-preview${touched ? ' touch-active' : ''}`}
+        onTouchStart={() => setTouched(true)}
+        onTouchEnd={() => setTouched(false)}
+      >
+        {usePng ? (
+          <img
+            src={pngSrc}
+            alt={title}
+            className="carousel-img-scroll-img"
+            onError={() => setUsePng(false)}
+            draggable={false}
+          />
+        ) : (
+          <iframe
+            src={`${image}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+            title={title}
+            className="carousel-iframe"
+            scrolling="no"
+          />
+        )}
+        <a href={live} target="_blank" rel="noreferrer" className="carousel-overlay">
+          <span>
+            <i className="bi bi-box-arrow-up-right"></i> {viewLabel}
+          </span>
+        </a>
+      </div>
     </div>
   )
 }
@@ -122,7 +136,6 @@ function Portfolio() {
             key={animKey}
             className={`carousel-card carousel-card--${dir}`}
           >
-            <ProjectPreview image={image} title={project.title} live={live} viewLabel={p.viewProject} />
             <div className="carousel-info">
               <h3>{project.title}</h3>
               <p>{project.description}</p>
@@ -133,6 +146,7 @@ function Portfolio() {
                 <i className="bi bi-box-arrow-up-right"></i> {p.visit}
               </a>
             </div>
+            <ProjectPreview image={image} title={project.title} live={live} viewLabel={p.viewProject} />
           </div>
 
           <button className="carousel-btn carousel-next" onClick={next} aria-label={p.next}>

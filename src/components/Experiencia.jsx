@@ -75,7 +75,7 @@ export default function Experiencia() {
       <div className="interface">
         <div ref={titleRef} className="section-header reveal">
           <h2 className="section-title">
-            {t.nav.experiencia ?? 'Experiência'} <span>{t.nav.profissional ?? 'Profissional'}</span>
+            Meu <span>{t.nav.curriculo ?? 'Currículo'}</span>
           </h2>
         </div>
 
