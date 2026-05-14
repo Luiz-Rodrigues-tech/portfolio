@@ -32,27 +32,14 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // IntersectionObserver apenas na home
+  // Marca ativo pela rota atual
   useEffect(() => {
-    if (location.pathname !== '/') return
-    const ids = ['inicio', 'sobre', 'projetos', 'especialidades', 'experiencia', 'contato']
-    const observers = ids.map(id => {
-      const el = document.getElementById(id)
-      if (!el) return null
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
-        { rootMargin: '-40% 0px -55% 0px' }
-      )
-      obs.observe(el)
-      return obs
-    })
-    return () => observers.forEach(o => o?.disconnect())
-  }, [location.pathname])
-
-  // Marca ativo pela rota fora da home
-  useEffect(() => {
-    const match = navItems.find(n => n.path === location.pathname)
-    if (match) setActiveSection(match.id)
+    if (location.pathname === '/') {
+      setActiveSection('inicio')
+    } else {
+      const match = navItems.find(n => n.path === location.pathname)
+      if (match) setActiveSection(match.id)
+    }
   }, [location.pathname])
 
   useEffect(() => {

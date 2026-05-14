@@ -16,6 +16,16 @@ const projects = [
   },
   {
     number: '02',
+    name: 'Leonel Gessos',
+    description: 'Site desenvolvido para empresa de aplicação de gesso, apresentando os serviços, portfólio de obras e facilitando o contato com clientes.',
+    whatIDid: 'Desenvolvi a interface completa, estruturei as seções de serviços e portfólio, e implementei o layout com foco em conversão e apresentação visual dos trabalhos.',
+    tags: ['Laravel', 'Vue.js', 'Tailwind CSS'],
+    live: 'https://leonelgesso.com.br',
+    image: '/pdf/Leonel_Gessos.png',
+    hasImage: true,
+  },
+  {
+    number: '03',
     name: 'Equali Consultoria',
     description: 'Site institucional desenvolvido para apresentar a consultoria, seus serviços e facilitar o contato com clientes de forma clara, profissional e responsiva.',
     whatIDid: 'Desenvolvi a interface, estruturei as seções da página, organizei a navegação e implementei o layout com foco em responsividade e apresentação da marca.',
@@ -25,67 +35,46 @@ const projects = [
     hasImage: true,
   },
   {
-    number: '03',
-    name: 'Sistema Web Administrativo',
-    description: 'Sistema voltado para gestão interna e organização de informações, com foco em usabilidade, integração com back-end e suporte à operação do negócio.',
-    whatIDid: 'Atuei na construção das telas, integração com APIs, ajustes de fluxo, correção de bugs e melhoria contínua da aplicação em ambiente profissional.',
-    tags: ['Laravel', 'Vue.js', 'Tailwind CSS', 'MySQL'],
-    live: null,
-    image: null,
-    hasImage: false,
+    number: '04',
+    name: 'Izadora — Portfólio',
+    description: 'Portfólio pessoal desenvolvido para apresentar trabalhos criativos de forma elegante, com navegação fluida e foco na experiência visual.',
+    whatIDid: 'Desenvolvi o layout do portfólio, estruturei as seções de apresentação e projetos, e implementei a navegação com foco em identidade visual e responsividade.',
+    tags: ['React', 'JavaScript', 'CSS'],
+    live: 'https://izadoraportfolio.com',
+    image: '/pdf/Izadora.png',
+    hasImage: true,
   },
   {
-    number: '04',
-    name: 'Integração de APIs e Back-end',
-    description: 'Projeto focado na comunicação entre sistemas, criação de rotas e tratamento de dados para garantir integrações consistentes entre aplicações.',
-    whatIDid: 'Desenvolvi APIs RESTful, organizei controllers e regras de negócio, tratei validações e estruturei a integração entre front-end e back-end.',
-    tags: ['PHP', 'Laravel', 'PostgreSQL', 'APIs RESTful'],
-    live: null,
-    image: null,
-    hasImage: false,
+    number: '05',
+    name: 'English Fast',
+    description: 'Plataforma desenvolvida para escola de idiomas, com apresentação de cursos, diferenciais e chamada para conversão de novos alunos.',
+    whatIDid: 'Desenvolvi a interface completa, estruturei as seções de cursos e diferenciais, e implementei o layout responsivo com foco em atração e conversão de alunos.',
+    tags: ['React', 'JavaScript', 'CSS'],
+    live: 'https://lightcoral-caterpillar-755231.hostingersite.com',
+    image: '/pdf/EnglishFast.png',
+    hasImage: true,
   },
 ]
 
-function ProjectPlaceholder({ number, name }) {
-  return (
-    <div className="proj-placeholder">
-      <span className="proj-placeholder__number">{number}</span>
-      <span className="proj-placeholder__name">{name}</span>
-    </div>
-  )
-}
-
 function ProjectBlock({ project, index }) {
-  const imgRef  = useReveal(0.08, true)
-  const infoRef = useReveal(0.08, true)
+  const imgRef  = useReveal(0.01)
+  const infoRef = useReveal(0.05)
   const isEven  = index % 2 === 1
-  // projetos pares: visual à esquerda, info à direita → visual desliza da esquerda
-  // projetos ímpares (reverse): visual à direita, info à esquerda → invertido
-  const visualAnim = isEven ? 'reveal-right' : 'reveal-left'
-  const infoAnim   = isEven ? 'reveal-left'  : 'reveal-right'
-  const delay      = `${index * 0.05}s`
+  const infoAnim = isEven ? 'reveal-left' : 'reveal-right'
 
   return (
     <article className={`proj-block ${isEven ? 'proj-block--reverse' : ''}`}>
-      <div
-        ref={imgRef}
-        className={`proj-block__visual ${visualAnim}`}
-        style={{ transitionDelay: delay }}
-      >
-        {project.hasImage ? (
-          <div className="proj-block__img-wrap">
-            <img src={project.image} alt={project.name} />
-            <div className="proj-block__img-overlay" />
-          </div>
-        ) : (
-          <ProjectPlaceholder number={project.number} name={project.name} />
-        )}
+      <div ref={imgRef} className="proj-block__visual reveal">
+        <div className="proj-block__img-wrap">
+          <img src={project.image} alt={project.name} />
+          <div className="proj-block__img-overlay" />
+        </div>
       </div>
 
       <div
         ref={infoRef}
         className={`proj-block__info ${infoAnim}`}
-        style={{ transitionDelay: `${index * 0.05 + 0.1}s` }}
+        style={{ transitionDelay: '0.12s' }}
       >
         <span className="proj-block__number">{project.number}</span>
         <h2 className="proj-block__name">{project.name}</h2>
