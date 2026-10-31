@@ -1,4 +1,5 @@
 import { LanguageProvider } from './context/LanguageContext'
+import { ThemeProvider } from './context/ThemeContext'
 
 import Layout from './components/Layout'
 import Hero from './components/Hero'
@@ -12,6 +13,7 @@ import ProjetosPage from './pages/ProjetosPage'
 import ServicosPage from './pages/ServicosPage'
 import ContatoPage from './pages/ContatoPage'
 import NotFoundPage from './pages/NotFoundPage'
+import MascotePage from './pages/MascotePage'
 
 function HomePage() {
   return (
@@ -31,6 +33,7 @@ const routes = [
   { path: '/projetos', element: <ProjetosPage /> },
   { path: '/servicos', element: <ServicosPage /> },
   { path: '/contato', element: <ContatoPage /> },
+  ...(import.meta.env.DEV ? [{ path: '/mascote', element: <MascotePage /> }] : []),
   { path: '*', element: <NotFoundPage /> },
 ]
 
@@ -46,9 +49,11 @@ const titleFor = (pathname) => TITLE_KEYS[pathname] ?? 'notFound'
 
 function App() {
   return (
-    <LanguageProvider>
-      <Layout routes={routes} titleFor={titleFor} />
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <Layout routes={routes} titleFor={titleFor} />
+      </LanguageProvider>
+    </ThemeProvider>
   )
 }
 

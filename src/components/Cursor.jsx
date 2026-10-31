@@ -30,7 +30,7 @@ export default function Cursor() {
         label.current.textContent = text ?? ''
         gsap.to(ring.current, {
           scale: text ? 2.6 : target ? 1.7 : 1,
-          backgroundColor: text ? 'rgba(77,208,204,0.92)' : 'rgba(77,208,204,0)',
+          '--ring-fill': text ? 1 : 0,
           duration: 0.45,
           overwrite: 'auto',
         })

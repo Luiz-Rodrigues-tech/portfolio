@@ -1,5 +1,7 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { gsap, useGSAP, prefersReducedMotion } from '../lib/gsap'
+import { sky } from '../lib/theme'
+import { useTheme } from '../context/ThemeContext'
 
 // 3 camadas com velocidades diferentes para efeito de profundidade
 function createLayer(count, w, h, rMin, rMax, depth) {
@@ -18,6 +20,11 @@ function createLayer(count, w, h, rMin, rMax, depth) {
 
 export default function StarField() {
   const canvasRef = useRef(null)
+  const redrawStill = useRef(null)
+  const { theme } = useTheme()
+
+  // Sem animação não há quadros rodando, então a troca de tema pede um novo desenho
+  useEffect(() => { redrawStill.current?.() }, [theme])
 
   useGSAP(() => {
     const canvas = canvasRef.current
@@ -61,6 +68,7 @@ export default function StarField() {
       scrollVel *= 0.85
 
       ctx.clearRect(0, 0, width, height)
+      if (sky.night <= 0) return
       ctx.fillStyle = '#fff'
 
       for (const layer of layers) {
@@ -68,7 +76,7 @@ export default function StarField() {
         for (const s of layer.stars) {
           const y = ((s.y - scrollAccum * layer.depth - pointer.y * layer.depth) % wrap + wrap) % wrap
           const x = s.x - pointer.x * layer.depth
-          ctx.globalAlpha = Math.min(1, Math.max(0, s.base + Math.sin(time * s.speed + s.offset) * s.base * 0.4))
+          ctx.globalAlpha = Math.min(1, Math.max(0, s.base + Math.sin(time * s.speed + s.offset) * s.base * 0.4)) * sky.night
           ctx.beginPath()
           ctx.arc(x, y, s.r, 0, Math.PI * 2)
           ctx.fill()
@@ -77,7 +85,7 @@ export default function StarField() {
 
       if (meteor.alpha > 0) {
         const gradient = ctx.createLinearGradient(meteor.x, meteor.y, meteor.x - meteor.tail, meteor.y - meteor.tail * 0.45)
-        gradient.addColorStop(0, `rgba(170,240,236,${meteor.alpha})`)
+        gradient.addColorStop(0, `rgba(170,240,236,${meteor.alpha * sky.night})`)
         gradient.addColorStop(1, 'rgba(170,240,236,0)')
         ctx.globalAlpha = 1
         ctx.strokeStyle = gradient
@@ -95,6 +103,7 @@ export default function StarField() {
 
     if (reduced) {
       const redraw = () => { resize(); draw() }
+      redrawStill.current = () => draw()
       window.addEventListener('resize', redraw)
       return () => window.removeEventListener('resize', redraw)
     }

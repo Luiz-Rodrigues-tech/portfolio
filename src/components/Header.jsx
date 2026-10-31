@@ -5,6 +5,7 @@ import {
   MOTION_OK, POINTER_OK, curtainRemaining, scrollToTarget,
 } from '../lib/gsap'
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 import { usePageTransition } from './Layout'
 
 const languages = [
@@ -24,6 +25,7 @@ const navItems = [
 function Header() {
   const { lang, setLang, t } = useLanguage()
   const { cover } = usePageTransition()
+  const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
@@ -36,6 +38,9 @@ function Header() {
   const langRef = useRef(null)
   const langMenuRef = useRef(null)
   const toggleRef = useRef(null)
+  const moonIcon = useRef(null)
+  const sunIcon = useRef(null)
+  const shownTheme = useRef(theme)
 
   const moveIndicator = (target, instant = false) => {
     const indicator = indicatorRef.current
@@ -108,6 +113,26 @@ function Header() {
 
     return () => mm.revert()
   }, { scope })
+
+  // No botão, o ícone do tema atual gira para dentro e o outro gira para fora
+  useGSAP(() => {
+    const active = theme === 'dark' ? moonIcon.current : sunIcon.current
+    const idle = theme === 'dark' ? sunIcon.current : moonIcon.current
+    const instant = shownTheme.current === theme || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    shownTheme.current = theme
+
+    if (instant) {
+      gsap.set(active, { y: 0, rotation: 0, scale: 1, autoAlpha: 1 })
+      gsap.set(idle, { y: 22, rotation: 90, scale: 0.5, autoAlpha: 0 })
+      return
+    }
+    gsap.to(idle, { y: 22, rotation: 90, scale: 0.5, autoAlpha: 0, duration: 0.6, ease: 'power2.in', overwrite: true })
+    gsap.fromTo(
+      active,
+      { y: -22, rotation: -90, scale: 0.5, autoAlpha: 0 },
+      { y: 0, rotation: 0, scale: 1, autoAlpha: 1, duration: 0.9, delay: 0.25, ease: 'back.out(1.8)', overwrite: true },
+    )
+  }, { dependencies: [theme] })
 
   // O indicador acompanha a rota e o texto traduzido do menu
   useEffect(() => {
@@ -239,6 +264,17 @@ function Header() {
             >
               <i className="bi bi-whatsapp" aria-hidden="true"></i>
             </a>
+
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? t.a11y.themeToLight : t.a11y.themeToDark}
+              title={theme === 'dark' ? t.a11y.themeToLight : t.a11y.themeToDark}
+            >
+              <i className="bi bi-moon-stars-fill theme-toggle__moon" ref={moonIcon} aria-hidden="true" />
+              <i className="bi bi-sun-fill theme-toggle__sun" ref={sunIcon} aria-hidden="true" />
+            </button>
 
             <div className="lang-dropdown" ref={langRef}>
               <button

@@ -15,6 +15,12 @@ const translations = {
       language: 'Idioma',
       mainNav: 'Navegação principal',
       backToTop: 'Voltar ao topo',
+      themeToLight: 'Mudar para o tema claro',
+      themeToDark: 'Mudar para o tema escuro',
+    },
+    mascot: {
+      hello: 'Oi! 👋',
+      label: 'Castor mascote: clique para interagir',
     },
     meta: {
       home: 'Luiz Henrique | Desenvolvedor Full-Stack',
@@ -275,6 +281,12 @@ const translations = {
       language: 'Language',
       mainNav: 'Main navigation',
       backToTop: 'Back to top',
+      themeToLight: 'Switch to light theme',
+      themeToDark: 'Switch to dark theme',
+    },
+    mascot: {
+      hello: 'Hi! 👋',
+      label: 'Beaver mascot: click to interact',
     },
     meta: {
       home: 'Luiz Henrique | Full-Stack Developer',
@@ -535,6 +547,12 @@ const translations = {
       language: 'Idioma',
       mainNav: 'Navegación principal',
       backToTop: 'Volver arriba',
+      themeToLight: 'Cambiar al tema claro',
+      themeToDark: 'Cambiar al tema oscuro',
+    },
+    mascot: {
+      hello: '¡Hola! 👋',
+      label: 'Castor mascota: haz clic para interactuar',
     },
     meta: {
       home: 'Luiz Henrique | Desarrollador Full-Stack',

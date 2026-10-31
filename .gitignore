@@ -10,5 +10,8 @@ Thumbs.db
 # Configuração pessoal do Claude Code
 .claude/settings.local.json
 
+# Prévias geradas por source-assets/mascote/gerar-pecas.py
+source-assets/mascote/previa-*
+
 # Documento pessoal, não faz parte do site
 img/CARTA DE COMUNICAÇÃO DE INÍCIO DE ATIVIDADES.pdf

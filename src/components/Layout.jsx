@@ -10,7 +10,9 @@ import { usePageMotion } from '../hooks/usePageMotion'
 import Header from './Header'
 import Footer from './Footer'
 import StarField from './StarField'
+import Sky from './Sky'
 import Cursor from './Cursor'
+import MascotDock from './mascot/MascotDock'
 
 const INTRO_KEY = 'portfolio-intro-seen'
 const COLUMNS = 5
@@ -174,8 +176,10 @@ export default function Layout({ routes, titleFor }) {
         <SmoothScroll />
         <a href="#conteudo" className="skip-link">{t.a11y.skip}</a>
         <StarField />
+        <Sky />
         <Cursor />
         <Header />
+        <MascotDock />
 
         <div className="curtain" aria-hidden="true" style={intro === 'none' ? { display: 'none' } : undefined}>
           {Array.from({ length: COLUMNS }, (_, i) => <span key={i} className="curtain__panel" />)}
