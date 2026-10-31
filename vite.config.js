@@ -43,6 +43,9 @@ export default defineConfig({
   build: {
     // Sem data: URIs, a CSP pode continuar restrita a 'self'
     assetsInlineLimit: 0,
+    // Em vercel.json, esta pasta fica fora do fallback para o index.html:
+    // arquivo que falta responde 404, não uma página HTML no lugar de JS ou CSS
+    assetsDir: 'static',
   },
   preview: {
     headers: SECURITY_HEADERS,
