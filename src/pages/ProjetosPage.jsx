@@ -1,100 +1,40 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import StarField from '../components/StarField'
-import { useReveal } from '../hooks/useReveal'
+import { useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useGSAP, ScrollTrigger, scrollToTarget } from '../lib/gsap'
+import { usePageMotion } from '../hooks/usePageMotion'
+import { useLanguage } from '../context/LanguageContext'
+import { featuredProjects, moreProjects } from '../data/projects'
+import ProjectShot from '../components/ProjectShot'
 
-const projects = [
-  {
-    number: '01',
-    name: 'Rejuvenece Estética',
-    description: 'Site completo desenvolvido para uma clínica estética com catálogo de procedimentos, galeria de resultados e agendamento online — tudo com foco em conversão e apresentação da marca.',
-    whatIDid: 'Desenvolvi a interface completa, estruturei as seções, implementei a galeria de resultados e integrei o sistema de agendamento com foco em responsividade e experiência do usuário.',
-    tags: ['Laravel', 'Vue.js', 'Tailwind CSS'],
-    live: 'https://rejuvenesceestetica.com.br',
-    image: '/pdf/Rejuvenesce.png',
-    hasImage: true,
-  },
-  {
-    number: '02',
-    name: 'Leonel Gessos',
-    description: 'Site desenvolvido para empresa de aplicação de gesso, apresentando os serviços, portfólio de obras e facilitando o contato com clientes.',
-    whatIDid: 'Desenvolvi a interface completa, estruturei as seções de serviços e portfólio, e implementei o layout com foco em conversão e apresentação visual dos trabalhos.',
-    tags: ['Laravel', 'Vue.js', 'Tailwind CSS'],
-    live: 'https://leonelgesso.com.br',
-    image: '/pdf/Leonel_Gessos.png',
-    hasImage: true,
-  },
-  {
-    number: '03',
-    name: 'Equali Consultoria',
-    description: 'Site institucional desenvolvido para apresentar a consultoria, seus serviços e facilitar o contato com clientes de forma clara, profissional e responsiva.',
-    whatIDid: 'Desenvolvi a interface, estruturei as seções da página, organizei a navegação e implementei o layout com foco em responsividade e apresentação da marca.',
-    tags: ['React', 'JavaScript', 'CSS'],
-    live: 'https://red-chough-671278.hostingersite.com',
-    image: '/pdf/Equali_Consultoria.png',
-    hasImage: true,
-  },
-  {
-    number: '04',
-    name: 'Izadora — Portfólio',
-    description: 'Portfólio pessoal desenvolvido para apresentar trabalhos criativos de forma elegante, com navegação fluida e foco na experiência visual.',
-    whatIDid: 'Desenvolvi o layout do portfólio, estruturei as seções de apresentação e projetos, e implementei a navegação com foco em identidade visual e responsividade.',
-    tags: ['React', 'JavaScript', 'CSS'],
-    live: 'https://izadoraportfolio.com',
-    image: '/pdf/Izadora.png',
-    hasImage: true,
-  },
-  {
-    number: '05',
-    name: 'English Fast',
-    description: 'Plataforma desenvolvida para escola de idiomas, com apresentação de cursos, diferenciais e chamada para conversão de novos alunos.',
-    whatIDid: 'Desenvolvi a interface completa, estruturei as seções de cursos e diferenciais, e implementei o layout responsivo com foco em atração e conversão de alunos.',
-    tags: ['React', 'JavaScript', 'CSS'],
-    live: 'https://lightcoral-caterpillar-755231.hostingersite.com',
-    image: '/pdf/EnglishFast.png',
-    hasImage: true,
-  },
-]
-
-function ProjectBlock({ project, index }) {
-  const imgRef  = useReveal(0.01)
-  const infoRef = useReveal(0.05)
-  const isEven  = index % 2 === 1
-  const infoAnim = isEven ? 'reveal-left' : 'reveal-right'
+function ProjectBlock({ project, text, index, labels }) {
+  const reverse = index % 2 === 1
 
   return (
-    <article className={`proj-block ${isEven ? 'proj-block--reverse' : ''}`}>
-      <div ref={imgRef} className="proj-block__visual reveal">
-        <div className="proj-block__img-wrap">
-          <img src={project.image} alt={project.name} />
-          <div className="proj-block__img-overlay" />
-        </div>
+    <article className={`proj-block ${reverse ? 'proj-block--reverse' : ''}`}>
+      <div className="proj-block__visual" data-clip>
+        <ProjectShot project={project} title={text.name} viewLabel={labels.view} data-scroll-shot />
       </div>
 
-      <div
-        ref={infoRef}
-        className={`proj-block__info ${infoAnim}`}
-        style={{ transitionDelay: '0.12s' }}
-      >
-        <span className="proj-block__number">{project.number}</span>
-        <h2 className="proj-block__name">{project.name}</h2>
-        <p className="proj-block__desc">{project.description}</p>
+      <div className="proj-block__info">
+        <span className="proj-block__number" aria-hidden="true" data-parallax="30">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <h2 className="proj-block__name" data-split="words">{text.name}</h2>
+        <p className="proj-block__desc" data-split="lines">{text.description}</p>
 
-        <div className="proj-block__whatidid">
-          <span className="proj-block__label">O que eu fiz</span>
-          <p>{project.whatIDid}</p>
+        <div className="proj-block__whatidid" data-reveal={reverse ? 'left' : 'right'}>
+          <span className="proj-block__label">{labels.whatIDid}</span>
+          <p>{text.whatIDid}</p>
         </div>
 
-        <div className="proj-block__tags">
-          {project.tags.map(tag => (
-            <span className="tag" key={tag}>{tag}</span>
-          ))}
+        <div className="project-tags" data-stagger>
+          {project.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
         </div>
 
         {project.live && (
-          <div className="proj-block__actions">
-            <a href={project.live} target="_blank" rel="noreferrer" className="btn-primary">
-              <i className="bi bi-box-arrow-up-right" /> Ver projeto
+          <div className="proj-block__actions" data-reveal="up" data-magnetic="0.2">
+            <a href={project.live} target="_blank" rel="noopener noreferrer" className="btn-primary">
+              {labels.view} <i className="bi bi-arrow-up-right" aria-hidden="true" />
             </a>
           </div>
         )}
@@ -103,38 +43,82 @@ function ProjectBlock({ project, index }) {
   )
 }
 
-export default function ProjetosPage() {
-  const headerRef = useReveal(0.1)
+// Aberto pelo botão, monta depois da página e precisa ligar as próprias animações.
+// Se já chega aberto, monta junto com a página e as animações dela já cobrem este bloco.
+function MoreProjects({ labels, openedByClick }) {
+  const scope = useRef(null)
+  usePageMotion(scope, openedByClick)
+
+  useGSAP(() => {
+    if (!openedByClick) return
+    ScrollTrigger.refresh()
+    scope.current.focus({ preventScroll: true })
+    scrollToTarget(scope.current)
+  }, { scope })
 
   return (
-    <>
-      <StarField />
-      <Header />
-      <main id="projetos" className="projetos-page">
-        <div className="interface">
+    <section className="projetos-more" ref={scope} tabIndex={-1} aria-label={labels.moreTitle}>
+      <span className="rule" data-grow-rule />
+      <p className="eyebrow" data-scramble>{labels.moreTitle}</p>
+      <div className="projetos-list">
+        {moreProjects.map((project, i) => (
+          <ProjectBlock
+            key={project.id}
+            project={project}
+            text={labels.items[project.id]}
+            index={featuredProjects.length + i}
+            labels={labels}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
 
-          <div ref={headerRef} className="projetos-page__header reveal">
-            <h1 className="section-title">Projetos em <span>destaque</span></h1>
-            <p className="projetos-page__subtitle">
-              Projetos e soluções que desenvolvi com foco em aplicações web, integrações e evolução de sistemas, unindo interface, lógica de negócio e manutenção prática.
-            </p>
-          </div>
+export default function ProjetosPage() {
+  const { t } = useLanguage()
+  const p = t.projectsPage
+  const location = useLocation()
+  const navigate = useNavigate()
+  // Quem vem de "Ver mais projetos" na home chega com os extras abertos.
+  // Só a chegada conta: um clique depois no menu não fecha a lista.
+  const [more, setMore] = useState(() => (location.state?.showMore ? { openedByClick: false } : null))
 
-          <div className="projetos-page__list">
-            {projects.map((project, i) => (
-              <ProjectBlock key={i} project={project} index={i} />
-            ))}
-          </div>
+  const openMore = () => {
+    setMore({ openedByClick: true })
+    // Fica no histórico para continuar aberto ao trocar de idioma ou recarregar
+    navigate('/projetos', { replace: true, state: { showMore: true } })
+  }
 
-          <div className="projetos-page__closing">
-            <p>
-              Cada projeto apresentado aqui reflete minha forma de trabalhar: entender o problema, estruturar a solução e desenvolver aplicações que funcionem bem na prática, do front ao back-end.
-            </p>
-          </div>
+  return (
+    <main id="projetos" className="page">
+      <div className="interface">
+        <header className="page-head">
+          <p className="eyebrow" data-scramble>{p.eyebrow}</p>
+          <h1 className="page-title" data-split="chars">{p.title} <span>{p.titleHighlight}</span></h1>
+          <p className="section-lead" data-split="lines">{p.subtitle}</p>
+        </header>
 
+        <div className="projetos-list">
+          {featuredProjects.map((project, i) => (
+            <ProjectBlock key={project.id} project={project} text={p.items[project.id]} index={i} labels={p} />
+          ))}
         </div>
-      </main>
-      <Footer />
-    </>
+
+        {more ? (
+          <MoreProjects labels={p} openedByClick={more.openedByClick} />
+        ) : (
+          <div className="projetos-more-action" data-reveal="up">
+            <span data-magnetic="0.25">
+              <button type="button" className="btn-secondary" onClick={openMore}>
+                {p.more} <i className="bi bi-arrow-down" aria-hidden="true" />
+              </button>
+            </span>
+          </div>
+        )}
+
+        <p className="page-closing" data-scrub-words>{p.closing}</p>
+      </div>
+    </main>
   )
 }

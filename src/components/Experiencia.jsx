@@ -1,5 +1,4 @@
 import { useLanguage } from '../context/LanguageContext'
-import { useReveal } from '../hooks/useReveal'
 
 const experiences = [
   {
@@ -41,10 +40,9 @@ const experiences = [
   },
 ]
 
-function ExpCard({ exp, delay }) {
-  const ref = useReveal(0.1)
+function ExpCard({ exp }) {
   return (
-    <div ref={ref} className="exp-card reveal" style={{ transitionDelay: `${delay}s` }}>
+    <div className="exp-card" data-reveal="up">
       <div className="exp-left">
         <span className="exp-period">{exp.period}</span>
         <div className="exp-tags">
@@ -52,7 +50,7 @@ function ExpCard({ exp, delay }) {
         </div>
       </div>
       <div className="exp-divider">
-        <div className="exp-dot" />
+        <div className="exp-dot" data-pop />
         <div className="exp-line" />
       </div>
       <div className="exp-right">
@@ -68,20 +66,19 @@ function ExpCard({ exp, delay }) {
 
 export default function Experiencia() {
   const { t } = useLanguage()
-  const titleRef   = useReveal()
 
   return (
-    <section id="experiencia" className="experiencia">
+    <section id="experiencia" className="section">
       <div className="interface">
-        <div ref={titleRef} className="section-header reveal">
-          <h2 className="section-title">
+        <div className="section-header">
+          <h2 className="section-title" data-split="lines">
             Meu <span>{t.nav.curriculo ?? 'Currículo'}</span>
           </h2>
         </div>
 
         <div className="exp-list">
           {experiences.map((exp, i) => (
-            <ExpCard key={i} exp={exp} delay={i * 0.08} />
+            <ExpCard key={i} exp={exp} />
           ))}
         </div>
       </div>

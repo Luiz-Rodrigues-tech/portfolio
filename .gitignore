@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.local
+*.log
+.DS_Store
+Thumbs.db
+
+# Configuração pessoal do Claude Code
+.claude/settings.local.json
+
+# Documento pessoal, não faz parte do site
+img/CARTA DE COMUNICAÇÃO DE INÍCIO DE ATIVIDADES.pdf

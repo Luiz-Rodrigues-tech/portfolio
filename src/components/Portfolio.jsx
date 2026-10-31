@@ -1,168 +1,186 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { gsap, useGSAP, ScrollSmoother, PIN_OK, MOTION_OK } from '../lib/gsap'
 import { useLanguage } from '../context/LanguageContext'
-import { useReveal } from '../hooks/useReveal'
-
-const projectImages = [
-  '/pdf/Rejuvenesce.png',
-  '/pdf/Leonel_Gessos.png',
-  '/pdf/Equali_Consultoria.png',
-  '/pdf/Izadora.png',
-  '/pdf/EnglishFast.png',
-]
-
-const projectTags = [
-  ['Laravel', 'Vue.js', 'Tailwind CSS'],
-  ['Laravel', 'Vue.js', 'Tailwind CSS'],
-  ['React', 'JavaScript', 'CSS'],
-  ['React', 'JavaScript', 'CSS'],
-  ['React', 'JavaScript', 'CSS'],
-]
-
-const projectLinks = [
-  'https://rejuvenesceestetica.com.br',
-  'https://leonelgesso.com.br',
-  'https://red-chough-671278.hostingersite.com',
-  'https://izadoraportfolio.com',
-  'https://lightcoral-caterpillar-755231.hostingersite.com',
-]
-
-function ProjectPreview({ image, title, live, viewLabel }) {
-  const pngSrc = image.replace('.pdf', '.png').replace('Equali Consultoria', 'Equali_Consultoria')
-  const [usePng, setUsePng] = useState(true)
-  const [touched, setTouched] = useState(false)
-  const domain = live.replace('https://', '').replace('http://', '').split('/')[0]
-
-  return (
-    <div className="carousel-browser">
-      <div className="browser-chrome">
-        <div className="browser-dots">
-          <span className="dot-red" />
-          <span className="dot-yellow" />
-          <span className="dot-green" />
-        </div>
-        <div className="browser-url">
-          <i className="bi bi-lock-fill" />
-          {domain}
-        </div>
-      </div>
-      <div
-        className={`carousel-preview${touched ? ' touch-active' : ''}`}
-        onTouchStart={() => setTouched(true)}
-        onTouchEnd={() => setTouched(false)}
-      >
-        {usePng ? (
-          <img
-            src={pngSrc}
-            alt={title}
-            className="carousel-img-scroll-img"
-            onError={() => setUsePng(false)}
-            draggable={false}
-          />
-        ) : (
-          <iframe
-            src={`${image}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-            title={title}
-            className="carousel-iframe"
-            scrolling="no"
-          />
-        )}
-        <a href={live} target="_blank" rel="noreferrer" className="carousel-overlay">
-          <span>
-            <i className="bi bi-box-arrow-up-right"></i> {viewLabel}
-          </span>
-        </a>
-      </div>
-    </div>
-  )
-}
+import { featuredProjects as projects } from '../data/projects'
+import ProjectShot from './ProjectShot'
 
 function Portfolio() {
   const { t } = useLanguage()
   const p = t.portfolio
-  const [current, setCurrent] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const [dir, setDir] = useState('next')
-  const [animKey, setAnimKey] = useState(0)
-  const headerRef   = useReveal()
-  const carouselRef = useReveal(0.1)
+  const scope = useRef(null)
 
-  const next = useCallback(() => {
-    setDir('next')
-    setAnimKey(k => k + 1)
-    setCurrent(i => (i + 1) % projectImages.length)
-  }, [])
+  useGSAP(() => {
+    const q = gsap.utils.selector(scope)
+    const mm = gsap.matchMedia()
 
-  const prev = useCallback(() => {
-    setDir('prev')
-    setAnimKey(k => k + 1)
-    setCurrent(i => (i - 1 + projectImages.length) % projectImages.length)
-  }, [])
+    mm.add(PIN_OK, () => {
+      const track = q('.work__track')[0]
+      const panels = q('.work__panel')
+      const counter = q('.work__current')[0]
+      const distance = () => track.scrollWidth - window.innerWidth
+      const cleanups = []
 
-  const goTo = useCallback((i) => {
-    setDir(i > current ? 'next' : 'prev')
-    setAnimKey(k => k + 1)
-    setCurrent(i)
-  }, [current])
+      const slide = gsap.to(track, {
+        x: () => -distance(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: q('.work__pin')[0],
+          pin: true,
+          start: 'top top',
+          end: () => `+=${distance()}`,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            gsap.set(q('.work__bar i'), { scaleX: self.progress })
+            // O painel atual é o último que já chegou à metade da tela
+            const middle = window.innerWidth / 2
+            const index = panels.reduce((last, panel, i) => (panel.getBoundingClientRect().left < middle ? i : last), 0)
+            counter.textContent = String(index + 1).padStart(2, '0')
+          },
+        },
+      })
 
-  useEffect(() => {
-    if (paused) return
-    const timer = setInterval(next, 5000)
-    return () => clearInterval(timer)
-  }, [paused, next])
+      // O primeiro painel já começa na tela: a captura dele só desce quando a galeria anda
+      const firstLeft = parseFloat(getComputedStyle(track).paddingLeft)
 
-  const image   = projectImages[current]
-  const tags    = projectTags[current]
-  const live    = projectLinks[current]
-  const project = p.projects[current]
+      panels.forEach((panel, i) => {
+        const view = panel.querySelector('.browser__view')
+        const img = view.querySelector('img')
+        const info = panel.querySelectorAll('.work__index, .work__name, .work__desc, .project-tags, .work__cta')
+
+        gsap.to(img, {
+          y: () => Math.min(0, view.clientHeight - img.offsetHeight),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: panel,
+            containerAnimation: slide,
+            start: i === 0 ? `left ${firstLeft}px` : 'left 70%',
+            end: 'right 30%',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+
+        gsap.from(panel.querySelector('.browser'), {
+          scale: 0.86,
+          rotationY: -12,
+          transformPerspective: 1400,
+          opacity: 0.25,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: panel,
+            containerAnimation: slide,
+            start: 'left 100%',
+            end: 'left 35%',
+            scrub: true,
+          },
+        })
+
+        gsap.from(info, {
+          x: 90,
+          opacity: 0,
+          stagger: 0.08,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: panel,
+            containerAnimation: slide,
+            start: 'left 92%',
+            end: 'left 35%',
+            scrub: true,
+          },
+        })
+
+        // Teclado: ao focar um link fora da tela, rola até o painel dele
+        const onFocus = () => {
+          const st = slide.scrollTrigger
+          const ratio = (panel.offsetLeft - window.innerWidth * 0.08) / distance()
+          const y = st.start + gsap.utils.clamp(0, 1, ratio) * (st.end - st.start)
+          const smoother = ScrollSmoother.get()
+          if (smoother) smoother.scrollTop(y)
+          else window.scrollTo(0, y)
+        }
+        panel.addEventListener('focusin', onFocus)
+        cleanups.push(() => panel.removeEventListener('focusin', onFocus))
+      })
+
+      return () => cleanups.forEach((fn) => fn())
+    })
+
+    // Sem pin (tablet, celular): cada projeto entra ao rolar e a captura desce junto
+    mm.add(`${MOTION_OK} and (max-width: 1024px), ${MOTION_OK} and (max-height: 599px)`, () => {
+      q('.work__panel').forEach((panel) => {
+        const view = panel.querySelector('.browser__view')
+        const img = view.querySelector('img')
+
+        gsap.from(panel, {
+          y: 60,
+          opacity: 0,
+          duration: 1.1,
+          scrollTrigger: { trigger: panel, start: 'top 88%' },
+        })
+
+        gsap.to(img, {
+          y: () => Math.min(0, view.clientHeight - img.offsetHeight),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: view,
+            start: 'top 85%',
+            end: 'bottom 15%',
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+          },
+        })
+      })
+    })
+
+    return () => mm.revert()
+  }, { scope })
 
   return (
-    <section id="projetos" className="portfolio">
-      <div className="interface">
-        <div ref={headerRef} className="section-header reveal">
-          <h2 className="section-title">{p.title} <span>{p.titleHighlight}</span></h2>
-        </div>
-
-        <div
-          ref={carouselRef}
-          className="carousel reveal"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <button className="carousel-btn carousel-prev" onClick={prev} aria-label={p.prev}>
-            <i className="bi bi-chevron-left"></i>
-          </button>
-
-          <div
-            key={animKey}
-            className={`carousel-card carousel-card--${dir}`}
-          >
-            <div className="carousel-info">
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-              <div className="project-tags">
-                {tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
-              </div>
-              <a href={live} target="_blank" rel="noreferrer" className="btn-primary carousel-cta">
-                <i className="bi bi-box-arrow-up-right"></i> {p.visit}
-              </a>
-            </div>
-            <ProjectPreview image={image} title={project.title} live={live} viewLabel={p.viewProject} />
+    <section id="projetos" className="work" ref={scope}>
+      <div className="work__pin">
+        <div className="interface work__head">
+          <div>
+            <p className="eyebrow" data-scramble>{p.eyebrow}</p>
+            <h2 className="section-title" data-split="lines">
+              {p.title} <span>{p.titleHighlight}</span>
+            </h2>
+            <p className="work__subtitle">{p.subtitle}</p>
           </div>
-
-          <button className="carousel-btn carousel-next" onClick={next} aria-label={p.next}>
-            <i className="bi bi-chevron-right"></i>
-          </button>
+          <div className="work__meter" aria-hidden="true">
+            <span className="work__count"><span className="work__current">01</span> / {String(projects.length).padStart(2, '0')}</span>
+            <span className="work__bar"><i /></span>
+          </div>
         </div>
 
-        <div className="carousel-dots">
-          {projectImages.map((_, i) => (
-            <button
-              key={i}
-              className={`carousel-dot ${i === current ? 'active' : ''}`}
-              onClick={() => goTo(i)}
-              aria-label={`${p.title} ${i + 1}`}
-            />
-          ))}
+        <div className="work__track">
+          {projects.map((project, i) => {
+            const text = p.projects[project.id]
+            return (
+              <article className="work__panel" key={project.id}>
+                <div className="work__info">
+                  <span className="work__index">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="work__name">{text.title}</h3>
+                  <p className="work__desc">{text.description}</p>
+                  <div className="project-tags">
+                    {project.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
+                  </div>
+                  <a href={project.live} target="_blank" rel="noopener noreferrer" className="btn-secondary work__cta">
+                    {p.visit} <i className="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </a>
+                </div>
+                <ProjectShot project={project} title={text.title} viewLabel={p.viewProject} />
+              </article>
+            )
+          })}
+          <div className="work__end">
+            <Link to="/projetos" state={{ showMore: true }} className="work__all" data-cursor={p.viewProject}>
+              <span>{p.seeAll}</span>
+              <i className="bi bi-arrow-right" aria-hidden="true"></i>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
